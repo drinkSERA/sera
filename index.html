@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SERA">
+<title>SERA — $227M</title>
+
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1714;
+    --gold: #B8922A;
+    --gold-light: #D4A843;
+    --muted: #7A7469;
+    --surface: #EDEAE2;
+    --border: rgba(26,23,20,0.12);
+    --accent: #2C4A3E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    overflow: hidden;
+  }
+
+  /* ── SHELL ── */
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 52px 28px 16px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .logo {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+  }
+  .logo span { color: var(--gold); }
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .streak-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+  .streak-dot.active { opacity: 1; animation: pulse 2s ease-in-out infinite; }
+
+  /* ── SCROLL CONTENT ── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 0 0 100px; }
+  .panel.active { display: block; }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 24px;
+    z-index: 100;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0;
+  }
+  .nav-icon {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-icon svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.5; transition: stroke 0.2s; }
+  .nav-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    transition: color 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-btn.active .nav-icon svg { stroke: var(--gold); }
+  .nav-btn.active .nav-label { color: var(--gold); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 28px;
+  }
+
+  /* ── FEEL PANEL ── */
+  .feel-hero {
+    padding: 8px 28px 0;
+  }
+  .feel-hero .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .feel-quote {
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .feel-quote em { font-style: normal; color: var(--gold); }
+
+  .feel-body {
+    padding: 0 28px;
+  }
+  .feel-block {
+    margin-bottom: 24px;
+  }
+  .feel-block .label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .feel-block p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .number-hero {
+    background: var(--ink);
+    margin: 0 28px;
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  .number-hero .label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .number-hero .big-num {
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold-light);
+    letter-spacing: -0.01em;
+    font-family: 'Courier New', monospace;
+  }
+  .number-hero .sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 8px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* daily affirmation rotator */
+  .affirmation-rotator {
+    margin: 0 28px 24px;
+    border-left: 2px solid var(--gold);
+    padding: 16px 20px;
+    background: var(--surface);
+    border-radius: 0 4px 4px 0;
+  }
+  .affirmation-rotator .aff-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .affirmation-rotator .aff-text {
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--ink);
+    min-height: 58px;
+    transition: opacity 0.5s;
+  }
+  .aff-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .aff-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .aff-btn:active { background: var(--surface); }
+  .aff-counter {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── BREATHE PANEL ── */
+  .breathe-wrap {
+    padding: 24px 28px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .breathe-eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    align-self: flex-start;
+  }
+  .breathe-intro {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-style: italic;
+    align-self: flex-start;
+    margin-bottom: 36px;
+  }
+  .breath-ring-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 28px;
+    cursor: pointer;
+  }
+  .breath-svg { width: 220px; height: 220px; }
+  .breath-track {
+    fill: none;
+    stroke: var(--surface);
+    stroke-width: 3;
+  }
+  .breath-progress {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 628;
+    stroke-dashoffset: 628;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 0.9s linear;
+  }
+  .breath-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .breath-word {
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .breath-count {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .breath-cycles {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .breath-affirmation {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--muted);
+    text-align: center;
+    padding: 0 20px;
+    line-height: 1.65;
+    min-height: 54px;
+    transition: opacity 0.6s;
+  }
+  .breath-tap-hint {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 16px;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  /* ── ROADMAP PANEL ── */
+  .roadmap-header {
+    padding: 8px 28px 0;
+  }
+  .roadmap-header .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .roadmap-header h2 {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .roadmap-header p {
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+  .timeline {
+    padding: 0 28px;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 42px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .milestone {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .ms-left {
+    flex-shrink: 0;
+    width: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+  }
+  .ms-year {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    white-space: nowrap;
+  }
+  .ms-node {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--cream);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .ms-node.gold { border-color: var(--gold); background: var(--gold); }
+  .ms-node.accent { border-color: var(--accent); background: var(--accent); }
+  .ms-card {
+    flex: 1;
+    background: var(--surface);
+    border-radius: 4px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ms-card:active { background: var(--cream); }
+  .ms-card .ms-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .ms-card .ms-title {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .ms-card .ms-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-style: italic;
+  }
+  .ms-card .ms-val {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    margin-top: 10px;
+    letter-spacing: 0.04em;
+  }
+  .ms-card .ms-feel {
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 8px;
+    font-style: italic;
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    display: none;
+  }
+  .ms-card.open .ms-feel { display: block; }
+  .ms-card.open { border-color: var(--gold); }
+
+  /* ── STREAK PANEL ── */
+  .streak-wrap {
+    padding: 8px 28px 0;
+  }
+  .streak-wrap .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .streak-count-wrap {
+    text-align: center;
+    padding: 36px 0;
+  }
+  .streak-count {
+    font-family: 'Courier New', monospace;
+    font-size: 80px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .streak-unit {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .streak-cta {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: var(--ink);
+    color: var(--gold-light);
+    border: none;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 28px;
+    transition: all 0.2s;
+  }
+  .streak-cta:active { opacity: 0.8; transform: scale(0.99); }
+  .streak-cta:disabled { opacity: 0.4; cursor: default; transform: none; }
+  .why-block {
+    background: var(--surface);
+    border-radius: 4px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .why-block .wlabel {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .why-block p {
+    font-size: 16px;
+    line-height: 1.75;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+  .cal-dot {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .cal-dot.done { background: var(--gold); border-color: var(--gold); }
+  .cal-dot.today { border-color: var(--ink); }
+
+  /* ── ANCHORS PANEL ── */
+  .anchors-wrap {
+    padding: 8px 28px 0;
+  }
+  .anchors-wrap .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .anchors-wrap .intro {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .anchor-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .anchor-card:active { border-color: var(--gold); }
+  .anchor-card .a-num {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .anchor-card .a-title {
+    font-size: 19px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .anchor-card .a-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel.active { animation: fadeUp 0.4s ease forwards; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="logo">SERA<span>.</span></div>
+    <div class="streak-badge">
+      <div class="streak-dot active" id="hStreak-dot"></div>
+      <span id="hStreak-label">day 0</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- FEEL -->
+    <div class="panel active" id="panel-feel">
+      <div class="feel-hero">
+        <div class="eyebrow">The feeling — step in</div>
+        <div class="feel-quote">
+          "I solved the problem no one else had solved. I built SERA because I needed it. And today, the world agreed — to the tune of <em>$227 million.</em>"
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="affirmation-rotator">
+        <div class="aff-label">Today's affirmation</div>
+        <div class="aff-text" id="aff-text">—</div>
+        <div class="aff-controls">
+          <button class="aff-btn" onclick="prevAff()">&#8592;</button>
+          <span class="aff-counter" id="aff-counter">1 / 8</span>
+          <button class="aff-btn" onclick="nextAff()">&#8594;</button>
+        </div>
+      </div>
+
+      <div class="feel-body">
+        <div class="feel-block">
+          <div class="label">What you feel in your body</div>
+          <p>Your chest is full but calm. Not buzzing — settled. Like something long-owed has finally arrived. Your partner squeezes your hand under the table. You don't need to say anything. They know. <em>You</em> know.</p>
+        </div>
+        <div class="feel-block">
+          <div class="label">The cycle that ends here</div>
+          <p>Your family's financial story — the limits, the weight of it — stops with this moment. Your children will grow up never knowing that version of life. That's not luck. That's seven years of you showing up for a problem you knew was real.</p>
+        </div>
+      </div>
+
+      <div class="number-hero">
+        <div class="label">Your take-home</div>
+        <div class="big-num">$140,267,450</div>
+        <div class="sub">Not a wish. A result. The result of you, today, choosing to show up again.</div>
+      </div>
+
+      <div class="feel-body">
+        <div class="feel-block">
+          <div class="label">The origin</div>
+          <p>You were frustrated one afternoon. You needed to focus. Caffeine wrecked your sleep. Nothing on the market solved it. So you built SERA. That frustration was worth $227 million. Remember that when today gets hard.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREATHE -->
+    <div class="panel" id="panel-breathe">
+      <div class="breathe-wrap">
+        <div class="breathe-eyebrow">Breathe in the exit</div>
+        <div class="breathe-intro">60 seconds. With every breath, the deal is already done. You're remembering forward.</div>
+
+        <div class="breath-ring-wrap" onclick="toggleBreath()" id="breath-ring">
+          <svg class="breath-svg" viewBox="0 0 220 220">
+            <circle class="breath-track" cx="110" cy="110" r="100"/>
+            <circle class="breath-progress" id="bProgress" cx="110" cy="110" r="100"/>
+          </svg>
+          <div class="breath-center">
+            <div class="breath-word" id="bWord">tap</div>
+            <div class="breath-count" id="bCount">begin</div>
+          </div>
+        </div>
+
+        <div class="breath-cycles" id="bCycles">— cycles —</div>
+        <div class="breath-affirmation" id="bAff">Step in. The exit is already written.</div>
+        <div class="breath-tap-hint" id="bHint">tap the circle to begin</div>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="panel" id="panel-roadmap">
+      <div class="roadmap-header">
+        <div class="eyebrow">7-year exit map</div>
+        <h2>The path to $227M</h2>
+        <p>Pre-revenue today. Strategic acquirer or PE exit in year 7. Every milestone below is both a business target and a feeling to step into now.</p>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- ANCHORS -->
+    <div class="panel" id="panel-anchors">
+      <div class="anchors-wrap">
+        <div class="eyebrow">Emotional anchors</div>
+        <div class="intro">When doubt surfaces, hold one of these. They are the feeling underneath the business.</div>
+        <div id="anchors-list"></div>
+      </div>
+    </div>
+
+    <!-- STREAK -->
+    <div class="panel" id="panel-streak">
+      <div class="streak-wrap">
+        <div class="eyebrow">Visualisation streak</div>
+        <div class="streak-count-wrap">
+          <div class="streak-count" id="streakNum">0</div>
+          <div class="streak-unit">days of showing up</div>
+        </div>
+
+        <div class="cal-grid" id="calGrid"></div>
+
+        <button class="streak-cta" id="streakBtn" onclick="checkIn()">Mark today's visualisation done</button>
+
+        <div class="why-block">
+          <div class="wlabel">Why the streak matters</div>
+          <p>"The brain doesn't cleanly distinguish between vivid imagination and real experience. Every day you step fully into this feeling, you're laying a neural groove. The exit becomes more neurologically real."</p>
+        </div>
+
+        <div class="why-block">
+          <div class="wlabel">The origin promise</div>
+          <p>"You built SERA because you couldn't find it. You are building this streak because you refuse to wait for permission to feel what's coming."</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="goTo('feel', this)">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <span class="nav-label">Feel</span>
+    </button>
+    <button class="nav-btn" onclick="goTo('breathe', this)">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      </div>
+      <span class="nav-label">Breathe</span>
+    </button>
+    <button class="nav-btn" onclick="goTo('roadmap', this)">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span class="nav-label">Roadmap</span>
+    </button>
+    <button class="nav-btn" onclick="goTo('anchors', this)">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <span class="nav-label">Anchors</span>
+    </button>
+    <button class="nav-btn" onclick="goTo('streak', this)">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <span class="nav-label">Streak</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<script>
+// ── DATA ──
+const AFFIRMATIONS = [
+  "The cycle ends with me. My family's story changes here.",
+  "I found the gap no one else saw. I built what didn't exist.",
+  "Seven years of showing up. That is the exit.",
+  "SERA was always going to be worth $227 million.",
+  "I don't need proof yet. The feeling is the proof.",
+  "I'm not wishing. I'm remembering forward.",
+  "The problem was real. The solution is real. The exit is real.",
+  "My kids will never know the weight I'm lifting right now."
+];
+
+const MILESTONES = [
+  {
+    year: "Now",
+    tag: "Year 0 — Foundation",
+    title: "SERA is born from a real problem",
+    desc: "Pre-revenue. You've solved the afternoon focus problem for yourself. The formula exists. The brand exists. The conviction exists. This is the hardest part — before the world validates what you already know.",
+    val: "Valuation: founder equity only",
+    feel: "Feel this: You're sitting with an idea that solves something real. Most people would walk away. You're still here. That's the difference.",
+    node: "gold"
+  },
+  {
+    year: "Yr 1",
+    tag: "Year 1 — Proof",
+    title: "First revenue. DTC working.",
+    desc: "Direct to consumer online. First 500 customers. Proof that strangers — not just friends — will pay for this. Unit economics starting to make sense. Packaging dialled. Story sharp.",
+    val: "Target: $150K–$300K ARR",
+    feel: "Feel this: Someone you've never met buys SERA because they have the same problem you had. You solved it for them. That's the beginning.",
+    node: ""
+  },
+  {
+    year: "Yr 2",
+    tag: "Year 2 — Traction",
+    title: "DTC scaled. First retail conversations.",
+    desc: "Online is working. You're acquiring customers profitably. You start talking to independent health stores and specialty retailers. SERA belongs on shelves — and you know it.",
+    val: "Target: $800K–$1.5M ARR | Valuation: ~$5M",
+    feel: "Feel this: You walk into a store and see SERA on the shelf. Someone picks it up and reads the back. That moment is coming.",
+    node: ""
+  },
+  {
+    year: "Yr 3",
+    tag: "Year 3 — Retail entry",
+    title: "Regional retail. Brand story landing.",
+    desc: "First major retail listing. Health food chains, specialty wellness. SERA is no longer DTC only — it's discoverable. The brand narrative (afternoon focus, no sleep compromise) resonates at shelf.",
+    val: "Target: $3M–$5M ARR | Valuation: ~$15M",
+    feel: "Feel this: A stranger in a supermarket picks SERA off the shelf. They've never heard of you. The brand speaks for itself.",
+    node: ""
+  },
+  {
+    year: "Yr 4",
+    tag: "Year 4 — Scale",
+    title: "National retail. Team built. B2B pilot.",
+    desc: "You're in national retailers. Team is real — sales, ops, marketing. You pilot B2B: corporate wellness, office drinks programs. The TAM expands. Acquirers start paying attention.",
+    val: "Target: $10M–$18M ARR | Valuation: ~$40M",
+    feel: "Feel this: You're running a real company. The problem you solved for yourself is now solving it for thousands. The machine is alive.",
+    node: ""
+  },
+  {
+    year: "Yr 5",
+    tag: "Year 5 — Momentum",
+    title: "Category leader. B2B growing fast.",
+    desc: "SERA is the brand in functional afternoon drinks. B2B is scaling — workplaces, gyms, hospitality. Inbound interest from strategics. PE conversations beginning. You're in a position of strength.",
+    val: "Target: $25M–$40M ARR | Valuation: ~$90M",
+    feel: "Feel this: People in meetings say 'we need a SERA moment' — the brand is a verb. That's when you know you've won the category.",
+    node: "accent"
+  },
+  {
+    year: "Yr 6",
+    tag: "Year 6 — Optionality",
+    title: "Run a process. Multiple bidders.",
+    desc: "You're not selling because you have to. You're selling because the moment is right. PE roll-up or strategic (Red Bull, Coca-Cola, Nestlé). You have leverage. Multiple parties want SERA.",
+    val: "Target: $50M+ ARR | Valuation: ~$150M–$180M",
+    feel: "Feel this: You walk into a room and they need you more than you need them. That calm in your chest — that's been building for six years.",
+    node: ""
+  },
+  {
+    year: "Yr 7",
+    tag: "Year 7 — Exit",
+    title: "The deal closes. $227,000,000.",
+    desc: "The call ends. The wire clears. $140,267,450 lands. Your partner is next to you. Your kids are in the next room. The cycle — your family's financial story — changes in this moment. Forever.",
+    val: "Exit: $227,000,000 | Take-home: $140,267,450",
+    feel: "Feel this now. This is the moment you're stepping toward every single day. It's already written. You're just living toward it.",
+    node: "gold"
+  }
+];
+
+const ANCHORS = [
+  {
+    num: "01",
+    title: "The frustrated afternoon",
+    body: "You couldn't find what you needed, so you became it. Every hard day now carries the same energy that built SERA. The frustration was the signal. You listened."
+  },
+  {
+    num: "02",
+    title: "Your partner's face on exit day",
+    body: "You already know this face. You've seen it in proud moments. On the day the deal closes, it's the same face — amplified by seven years of choosing to back you."
+  },
+  {
+    num: "03",
+    title: "The thing your kids never have to carry",
+    body: "They won't remember the sacrifice. Only the result. You're building their future today — in the years before they can even ask for it."
+  },
+  {
+    num: "04",
+    title: "The market catching up to you",
+    body: "$227M isn't external validation. It's the world finally agreeing with what you already knew when you made the first batch. You were right before anyone said so."
+  },
+  {
+    num: "05",
+    title: "The cycle that ends here",
+    body: "Your family's financial story has a before and after. You are the inflection point. That weight — the limits, the stress — stops with you. It ends here."
+  }
+];
+
+// ── STATE ──
+let affIdx = 0;
+let breathActive = false;
+let breathInterval = null;
+let bPhase = 0;
+let bTick = 0;
+let bCycles = 0;
+const bPhases = [
+  { label: "breathe in", count: 4 },
+  { label: "hold", count: 4 },
+  { label: "breathe out", count: 6 },
+  { label: "rest", count: 2 }
+];
+
+// ── STORAGE ──
+const STORE_KEY = 'sera-streak-v1';
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || { count: 0, lastDate: null, history: [] }; }
+  catch(e) { return { count: 0, lastDate: null, history: [] }; }
+}
+function saveData(d) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch(e) {}
+}
+
+// ── NAV ──
+function goTo(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  document.querySelector('.content').scrollTop = 0;
+}
+
+// ── AFFIRMATIONS ──
+function renderAff() {
+  const el = document.getElementById('aff-text');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = AFFIRMATIONS[affIdx];
+    document.getElementById('aff-counter').textContent = (affIdx + 1) + ' / ' + AFFIRMATIONS.length;
+    el.style.opacity = '1';
+  }, 250);
+}
+function nextAff() { affIdx = (affIdx + 1) % AFFIRMATIONS.length; renderAff(); }
+function prevAff() { affIdx = (affIdx - 1 + AFFIRMATIONS.length) % AFFIRMATIONS.length; renderAff(); }
+
+// ── BREATHE ──
+const circumference = 2 * Math.PI * 100;
+function setProgress(pct) {
+  document.getElementById('bProgress').style.strokeDashoffset = circumference * (1 - pct);
+}
+function toggleBreath() {
+  if (breathActive) {
+    clearInterval(breathInterval);
+    breathActive = false;
+    bPhase = 0; bTick = 0; bCycles = 0;
+    document.getElementById('bWord').textContent = 'tap';
+    document.getElementById('bCount').textContent = 'begin';
+    document.getElementById('bCycles').textContent = '— cycles —';
+    document.getElementById('bHint').style.display = 'block';
+    document.getElementById('bAff').textContent = 'Step in. The exit is already written.';
+    setProgress(0);
+  } else {
+    breathActive = true;
+    document.getElementById('bHint').style.display = 'none';
+    runBreathTick();
+    breathInterval = setInterval(runBreathTick, 1000);
+  }
+}
+function runBreathTick() {
+  const phase = bPhases[bPhase];
+  const remaining = phase.count - bTick;
+  document.getElementById('bWord').textContent = phase.label;
+  document.getElementById('bCount').textContent = remaining;
+  const phasePct = bTick / phase.count;
+  const totalPct = (bPhase / bPhases.length) + (phasePct / bPhases.length);
+  setProgress(totalPct);
+  bTick++;
+  if (bTick > phase.count) {
+    bTick = 0;
+    bPhase = (bPhase + 1) % bPhases.length;
+    if (bPhase === 0) {
+      bCycles++;
+      document.getElementById('bCycles').textContent = bCycles + (bCycles === 1 ? ' cycle' : ' cycles');
+      document.getElementById('bAff').textContent = AFFIRMATIONS[(bCycles - 1) % AFFIRMATIONS.length];
+    }
+  }
+}
+
+// ── ROADMAP ──
+function buildRoadmap() {
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+  MILESTONES.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'milestone';
+    div.innerHTML = `
+      <div class="ms-left">
+        <div class="ms-year">${m.year}</div>
+        <div class="ms-node ${m.node}"></div>
+      </div>
+      <div class="ms-card" onclick="toggleMs(this)">
+        <div class="ms-tag" style="color:${m.node === 'gold' ? 'var(--gold)' : m.node === 'accent' ? 'var(--accent)' : 'var(--muted)'}">${m.tag}</div>
+        <div class="ms-title">${m.title}</div>
+        <div class="ms-desc">${m.desc}</div>
+        <div class="ms-val">${m.val}</div>
+        <div class="ms-feel">${m.feel}</div>
+      </div>`;
+    tl.appendChild(div);
+  });
+}
+function toggleMs(card) {
+  card.classList.toggle('open');
+}
+
+// ── ANCHORS ──
+function buildAnchors() {
+  const list = document.getElementById('anchors-list');
+  list.innerHTML = '';
+  ANCHORS.forEach(a => {
+    const div = document.createElement('div');
+    div.className = 'anchor-card';
+    div.innerHTML = `<div class="a-num">${a.num}</div><div class="a-title">${a.title}</div><div class="a-body">${a.body}</div>`;
+    list.appendChild(div);
+  });
+}
+
+// ── STREAK ──
+function buildCal(data) {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const today = new Date().toDateString();
+  const history = data.history || [];
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const ds = d.toDateString();
+    const dot = document.createElement('div');
+    dot.className = 'cal-dot' + (history.includes(ds) ? ' done' : '') + (ds === today ? ' today' : '');
+    grid.appendChild(dot);
+  }
+}
+function renderStreak() {
+  const data = loadData();
+  const today = new Date().toDateString();
+  document.getElementById('streakNum').textContent = data.count;
+  document.getElementById('hStreak-label').textContent = 'day ' + data.count;
+  buildCal(data);
+  const btn = document.getElementById('streakBtn');
+  if (data.lastDate === today) {
+    btn.textContent = 'Visualised today ✓';
+    btn.disabled = true;
+  } else {
+    btn.textContent = 'Mark today\'s visualisation done';
+    btn.disabled = false;
+  }
+}
+function checkIn() {
+  const data = loadData();
+  const today = new Date().toDateString();
+  if (data.lastDate !== today) {
+    data.count += 1;
+    data.lastDate = today;
+    data.history = data.history || [];
+    data.history.push(today);
+    if (data.history.length > 90) data.history = data.history.slice(-90);
+    saveData(data);
+  }
+  renderStreak();
+}
+
+// ── INIT ──
+(function init() {
+  // set today's affirmation by day of year
+  const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  affIdx = doy % AFFIRMATIONS.length;
+  renderAff();
+  buildRoadmap();
+  buildAnchors();
+  renderStreak();
+})();
+</script>
+</body>
+</html>
